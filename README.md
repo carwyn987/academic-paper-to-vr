@@ -12,7 +12,7 @@
 
 Ensure the environment is setup. Mine is set up in a venv with the requirements.txt file.
 
-Ensure OPENAI_API_KEY is set as an environment variable, or specify your own in a file called openai_api_key.txt, which is set automatically.
+Ensure OPENAI_API_KEY is set as an environment variable. openai_api_key.sh is automatically sourced.
  - The openai api key is used to clean text to ensure smooth diction, create the audio file, and potentially parse any images on the screen.
 
 ## Example Use:
