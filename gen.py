@@ -25,35 +25,29 @@ def main(args):
         base_dir = os.path.join(args.bin_dir, filename)
         audio_dir = os.path.join(base_dir, "audio")
         image_dir = os.path.join(base_dir, "images")
+        text_dir = os.path.join(base_dir, "text")
         output_file = os.path.join(base_dir,f"{filename}.mp4")
         os.makedirs(base_dir, exist_ok=True)
         os.makedirs(audio_dir, exist_ok=True)
         os.makedirs(image_dir, exist_ok=True)
+        os.makedirs(text_dir, exist_ok=True)
 
         page_content_map = process_path(file)
-        cleaned_page_content_map = clean_page_content_map(filename, page_content_map, args.model)
+        cleaned_page_content_map = clean_page_content_map(text_dir, filename, page_content_map, args.model)
+        print("cleaned_page_content_map = ", cleaned_page_content_map)
         
         if args.verbose:
             print("Pre-cleaned:::: \n ===========================================\n" + page_content_map[0])
             print("\n\nPost-cleaned:::: \n ===========================================\n" + cleaned_page_content_map[0])
 
         page_audio_map = generate_audio(audio_dir, filename, cleaned_page_content_map, args.voice)
-        print(page_audio_map)
-
+        
         # For testing, at this point we have dictionaries of the text, cleaned text, audio paths
-        # page_audio_map = {
-        #     0: "bin/a_formal_measure_of_machine_intelligence/audio/a_formal_measure_of_machine_intelligence_0.mp3",
-        #     1: "bin/a_formal_measure_of_machine_intelligence/audio/a_formal_measure_of_machine_intelligence_1.mp3",
-        #     2: "bin/a_formal_measure_of_machine_intelligence/audio/a_formal_measure_of_machine_intelligence_2.mp3",
-        #     3: "bin/a_formal_measure_of_machine_intelligence/audio/a_formal_measure_of_machine_intelligence_3.mp3",
-        #     4: "bin/a_formal_measure_of_machine_intelligence/audio/a_formal_measure_of_machine_intelligence_4.mp3",
-        #     5: "bin/a_formal_measure_of_machine_intelligence/audio/a_formal_measure_of_machine_intelligence_4.mp3",
-        #     6: "bin/a_formal_measure_of_machine_intelligence/audio/a_formal_measure_of_machine_intelligence_4.mp3",
-        #     7: "bin/a_formal_measure_of_machine_intelligence/audio/a_formal_measure_of_machine_intelligence_4.mp3",
-        # }
+        print("page_audio_map = ", page_audio_map)
 
         # Get image dictionary
         page_image_map = generate_pdf_images(file, image_dir, filename)
+        print("page_image_map = ", page_image_map)
 
         stitch_pages(page_image_map, page_audio_map, output_file, args.fps)
 

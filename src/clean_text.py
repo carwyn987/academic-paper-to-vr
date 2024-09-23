@@ -1,13 +1,20 @@
 from openai import OpenAI
 from tqdm import tqdm
+import os
 
-def clean_page_content_map(filename: str, page_content_map: dict[int,str], model: str) -> dict[int,str]:
+def clean_page_content_map(text_dir: str, filename: str, page_content_map: dict[int,str], model: str) -> dict[int,str]:
     cleaned_page_content = dict()
 
     for page,content in tqdm(page_content_map.items(), desc=f"Generating cleaned content for {filename}"):
-        cleaned_page_content[page] = clean_text(content, model)
-        # if page == 1:
-        #     break
+        
+        if os.path.exists(os.path.join(text_dir, f"{filename}_{page}.txt")):
+            with open(os.path.join(text_dir, f"{filename}_{page}.txt"), 'r') as f:
+                cleaned_page_content[page] = f.read()
+                print("Skipping text cleaning, already exists ...")
+        else:
+            cleaned_page_content[page] = clean_text(content, model)
+            with open(os.path.join(text_dir, f"{filename}_{page}.txt"), 'w') as f:
+                f.write(cleaned_page_content[page])
 
     return cleaned_page_content
 
@@ -21,12 +28,12 @@ def clean_text(text: str, model: str) -> str:
     completion = client.chat.completions.create(
         model=model,
         messages=[
-            {"role": "system", "content": "You are a processor. You take input, follow \
-             instructions, and give output. Do not give any context. Just do as is asked. \
-             Do not reiterate the question, or ask for any follow up."},
+            {"role": "system", "content": "Do not give any context. \
+             Do not reiterate the question, or ask for any follow up. \
+             Only answer the prompts directly."},
             {
                 "role": "user",
-                "content": "Please clean up the text below by removing errors, hanging \
+                "content": "Clean up the text below by removing errors, hanging \
                     numbers (such as page or figure numbers, header numbers, or section \
                     identifiers) that don't follow the sentence, and extraneous \
                     characters (like unnecessary slashes, dashes, or underscores). \

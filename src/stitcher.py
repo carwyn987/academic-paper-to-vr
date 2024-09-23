@@ -14,9 +14,14 @@ from moviepy.editor import *
 
 def stitch_pages(page_image_map: dict[int,str], page_audio_map: dict[int,list], output_file: str, fps: float):
     clips = []
+
+    if len(page_image_map) > 30:
+        print("Long paper ... potential failure on pymovie")
+
     for page in page_image_map:
+        if page <= 30:
+            continue
         print("PAGE: ", page)
-        print("page_image_map::: ", page_image_map)
         image = ImageClip(page_image_map[page])
         audio_files = page_audio_map[page]
         

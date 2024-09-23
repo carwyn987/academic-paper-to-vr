@@ -33,9 +33,18 @@ def upload_video(self, file_path, video_content):
     video_id = self.resumable_upload(insert_request)
     self.upload_thumbnail(video_id, 'files/youtube/thumbnail.png')
 
-def upload():
+def upload(bin_dir: str, image_dir: str, filename: str):
     # Try and find thumbnail.png or thumbnail.jpg. If they don't exist, use the first image from the paper
-
+    if os.path.exists(os.path.join(bin_dir, "thumbnail.png")):
+        thumbnail = os.path.join(bin_dir, "thumbnail.png")
+    elif os.path.exists(os.path.join(bin_dir, "thumbnail.jpg")):
+        thumbnail = os.path.join(bin_dir, "thumbnail.jpg")
+    elif os.path.exists(os.path.join(image_dir, f"{filename}_{0}.png")):
+        thumbnail = os.path.join(image_dir, f"{filename}_{0}.png")
+    else:
+        assert False, "No thumbnail available"
+         
     # Use cleaned content and get a video title, video description (including github link), and tags
+    
 
     # Upload
